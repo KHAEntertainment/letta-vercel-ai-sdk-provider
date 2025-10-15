@@ -3,6 +3,15 @@ import 'dotenv/config';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 
+/**
+ * Run an end-to-end real-world test against the built letta provider.
+ *
+ * Dynamically loads the provider module from dist/index.mjs, selects a letta provider
+ * based on environment variables (BASE_URL_OVERRIDE / LETTA_BASE_URL, TEST_MODE),
+ * optionally creates a temporary agent when LETTA_AGENT_ID is not provided, performs
+ * a non-streaming text generation and a streaming text generation, and removes the
+ * temporary agent if one was created.
+ */
 async function main() {
   const distPath = path.resolve(process.cwd(), 'dist', 'index.mjs');
   const providerMod = await import(pathToFileURL(distPath).toString());

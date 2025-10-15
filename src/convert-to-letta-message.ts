@@ -1,6 +1,16 @@
 import { LanguageModelV2Prompt } from "@ai-sdk/provider";
 import { MessageCreate } from "@letta-ai/letta-client/api";
 
+/**
+ * Normalize an array of content parts into an array of text-only parts.
+ *
+ * Filters and transforms the input `parts` so that items with `type: "text"` are returned
+ * as `{ type: "text", text: string }`, items whose `type` string starts with `"tool-"` are omitted,
+ * and any other part types cause an error.
+ *
+ * @param parts - An array of content part objects; each part must have a `type` property and text parts must include `text`.
+ * @returns An array of normalized text parts of the shape `{ type: "text", text: string }`.
+ */
 function transformContentParts(parts: any[]): any[] {
   return parts.flatMap((part: any) => {
     switch (part.type) {
@@ -16,6 +26,13 @@ function transformContentParts(parts: any[]): any[] {
   });
 }
 
+/**
+ * Convert a LanguageModelV2Prompt into an array of Letta MessageCreate objects.
+ *
+ * @param prompt - The prompt (array of messages) to convert.
+ * @returns An array of Letta-compatible MessageCreate objects representing each input message.
+ * @throws Error if a message has role "assistant", "tool", an unsupported role, or contains unsupported content types.
+ */
 export function convertToLettaMessage(
   prompt: LanguageModelV2Prompt,
 ): MessageCreate[] {

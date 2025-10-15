@@ -67,6 +67,16 @@ interface ChatProps {
   saveAgentIdCookie: (agentId: string) => void;
 }
 
+/**
+ * Render an interactive chat UI for an agent, including message list, reasoning/tool displays, and an input form.
+ *
+ * Renders messages (with text, model/agent reasoning, and named tool parts), toggles for showing model and agent reasoning, a debug panel per message, and a fixed input bar to send new messages.
+ *
+ * @param props.agentId - Identifier of the agent to chat with; used to configure the transport and shown in the header.
+ * @param props.existingMessages - Optional initial messages to seed the chat display.
+ * @param props.saveAgentIdCookie - Callback invoked once on mount to persist the agentId (e.g., in a cookie).
+ * @returns The chat component's React element tree for interacting with the specified agent.
+ */
 export function Chat(props: ChatProps) {
   const { agentId, saveAgentIdCookie, existingMessages = [] } = props;
   const [input, setInput] = useState("");

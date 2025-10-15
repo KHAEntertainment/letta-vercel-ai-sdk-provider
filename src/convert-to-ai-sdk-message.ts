@@ -18,6 +18,18 @@ const baseOptions: ConvertToAiSdkMessageOptions = {
   ],
 };
 
+/**
+ * Convert message content (a plain string or a structured array) into an array of UI parts.
+ *
+ * When `content` is a string, produces a single text part. When `content` is an array, each element must have a `type` of `"text"`, `"image_url"`, or `"input_audio"`:
+ * - `"text"` elements become `TextUIPart` with the element's `text`.
+ * - `"image_url"` elements use `imageUrl.url` or `imageUrl` (if a string) to produce a `FileUIPart` with `mediaType: "image/*"`.
+ * - `"input_audio"` elements use `inputAudio.url` to produce a `FileUIPart` with `mediaType: "audio/*"`.
+ *
+ * @param content - Message content as a string or an array of typed content objects.
+ * @returns An array of `TextUIPart` and/or `FileUIPart` representing the message content.
+ * @throws Error if an array element's `type` is not one of the supported types.
+ */
 function transformMessageContent(content: string | any[]): (TextUIPart | FileUIPart)[] {
   if (Array.isArray(content)) {
     const parts: (TextUIPart | FileUIPart)[] = [];
@@ -46,6 +58,17 @@ function transformMessageContent(content: string | any[]): (TextUIPart | FileUIP
   return [{ type: "text", text: content as string }];
 }
 
+/**
+ * Convert an array of Letta-formatted messages into an array of UIMessage objects for the AI SDK.
+ *
+ * Processes supported Letta message types (system, user, assistant, reasoning, tool_call, tool_return),
+ * filters by allowed message types from `options`, and assembles per-message `parts` containing
+ * TextUIPart, FileUIPart, ReasoningUIPart, and ToolUIPart entries with embedded LettA metadata where applicable.
+ *
+ * @param messages - Array of Letta messages to convert
+ * @param options - Conversion options; `allowMessageTypes` restricts which message types are included
+ * @returns An array of UIMessage objects with aggregated `parts` for each message id (one UIMessage per unique message id)
+ */
 export function convertToAiSdkMessage(
   messages: LettaMessageUnion[],
   options: ConvertToAiSdkMessageOptions = baseOptions,

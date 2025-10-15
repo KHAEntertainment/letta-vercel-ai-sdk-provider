@@ -2,13 +2,27 @@ import { streamText, convertToModelMessages } from "ai";
 import { lettaCloud, lettaLocal } from "@letta-ai/vercel-ai-sdk-provider";
 import { AGENT_ID, TEST_MODE } from "@/app/env-vars";
 
-// Helper to extract text content from message
+/**
+ * Extracts the textual content from a message's content field.
+ *
+ * @param message - Message object whose `content` is either a string or an array of parts.
+ *                  When `content` is an array, only parts with `type === 'text'` are used;
+ *                  missing `text` values are treated as empty strings.
+ * @returns The message text: if `content` is a string, that string; if it's an array, the selected text parts joined with single spaces.
+ */
 function extractMessageContent(message: { content: string | Array<{ type: string; text?: string }> }): string {
   return typeof message.content === 'string'
     ? message.content
     : message.content.map(part => part.type === 'text' ? (part.text ?? '') : '').join(' ');
 }
 
+/**
+ * Accepts a request with conversational messages, routes those messages to a Letta agent, and returns a streaming UI response containing the agent's messages and reasoning.
+ *
+ * @param req - HTTP request whose JSON body must include `messages` (array) and may include `agentId` (string) to override the LETTA_AGENT_ID environment variable
+ * @returns A Response that is a UI message stream from the selected Letta agent on success; on failure, a 500 JSON Response describing the error and diagnostic details
+ * @throws If neither `agentId` is provided in the request body nor LETTA_AGENT_ID is set in the environment
+ */
 export async function POST(req: Request) {
   const { messages, agentId } = await req.json();
 

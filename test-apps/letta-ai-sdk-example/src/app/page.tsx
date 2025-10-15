@@ -23,6 +23,15 @@ async function getAgentId() {
   return AGENT_ID;
 }
 
+/**
+ * Fetches stored messages for the specified agent and converts them into UI-friendly message objects.
+ *
+ * This function reads messages from the configured environment (local or cloud) and returns only
+ * message types intended for the UI, including user, assistant, reasoning, tool call/return, and system messages.
+ *
+ * @param agentId - The agent identifier whose message history should be retrieved
+ * @returns An array of converted UI message objects for the agent; returns an empty array if fetching fails
+ */
 async function getExistingMessages(agentId: string) {
   try {
     console.log("=====", TEST_MODE);
@@ -66,6 +75,11 @@ async function saveAgentIdCookie(agentId: string) {
   cookie.set("active-agent", agentId, { path: "/" });
 }
 
+/**
+ * Render the homepage that initializes and displays the Letta AI SDK chat interface, demo features, and technical notes.
+ *
+ * @returns The React element for the homepage, with the Chat component preloaded with the resolved agent ID and existing messages.
+ */
 export default async function Homepage() {
   const agentId = await getAgentId();
 
