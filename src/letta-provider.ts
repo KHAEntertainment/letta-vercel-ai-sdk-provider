@@ -47,7 +47,22 @@ export interface LettaProvider extends ProviderV2 {
 }
 
 /**
- * Create a Letta AI provider instance.
+ * Create a Letta provider callable that produces a Letta language model.
+ *
+ * The returned provider is a function that, when invoked with no arguments, returns
+ * a LanguageModelV2 instance backed by a LettaClient. The provider also exposes
+ * a `client` property containing the underlying LettaClient and a `tool` property
+ * for creating Letta tool placeholders.
+ *
+ * @param options - Options forwarded to LettaClient. `token` defaults to the
+ *   `LETTA_API_KEY` environment variable when not provided. `baseUrl` defaults to
+ *   `LETTA_BASE_URL` or `"https://api.letta.com"` when not provided.
+ * @returns A LettaProvider callable which produces a LettaChatModel and exposes
+ *   `.client` (the LettaClient) and `.tool` (the tool placeholder helper).
+ * @throws Error - The returned provider will throw if it is called with the `new`
+ *   keyword.
+ * @throws Error - The returned provider will throw if it is invoked with any arguments,
+ *   since model configuration is managed through Letta agents rather than parameters.
  */
 export function createLetta(options: LettaClient.Options = {}): LettaProvider {
   const client = new LettaClient({

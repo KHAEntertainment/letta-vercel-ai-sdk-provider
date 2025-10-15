@@ -6,6 +6,20 @@ import {
 import { lettaCloud, lettaLocal } from "@letta-ai/vercel-ai-sdk-provider";
 import { AGENT_ID, TEST_MODE } from "@/app/env-vars";
 
+/**
+ * Handle POST requests to generate assistant text using a Letta agent, optionally using web search and memory tools.
+ *
+ * Expects the request body to be JSON with:
+ * - `messages`: a non-empty array of UI-style messages (the last message's text is used as the prompt).
+ * - `agentId` (optional): overrides the LETTA_AGENT_ID environment variable.
+ *
+ * @param req - The incoming HTTP request whose JSON body contains `messages` and optional `agentId`.
+ * @returns An HTTP Response with JSON:
+ * - On success: `{ messages: [ { id, role: "assistant", content, experimental_data } ] }`.
+ * - On client error: 400 with `{ error: "messages array is required" }` when `messages` is missing or empty.
+ * - On server error: 500 with an error payload when text generation (including fallback) fails.
+ * @throws If no agent ID is available (neither `agentId` in the request nor LETTA_AGENT_ID env var).
+ */
 export async function POST(req: Request) {
   const { messages, agentId } = await req.json();
 

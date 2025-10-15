@@ -17,6 +17,12 @@ export const metadata: Metadata = {
   description: "Testing the Letta ai sdk provider",
 };
 
+/**
+ * Root layout component that sets the document language, applies global fonts and antialiasing, and renders the page content.
+ *
+ * @param children - React nodes to render inside the document body
+ * @returns The root HTML structure (<html> and <body>) containing the provided children with global font variables applied
+ */
 export default function RootLayout({
   children,
 }: Readonly<{
